@@ -1,5 +1,5 @@
 /*
- * Main controlador.
+ * Implementación funciones controller
  *
  * Universidade Da Coruña. 2015
  *
@@ -8,23 +8,20 @@
  */
 
 // módulos y librerías externas
-#include "systemc.h"
-#include "fifo.h"
+#include "controller.h"
 
-
-SC_MODULE (controller) {
-  SC_CTOR (controller) {
-	fifo_T<sc_uint<64>> *Qfa[11], *Qfb[10];
-	fifo_T<sc_uint<64>> *Qr[10], *Qs[10], *Qo[10];
- 
-	for(int i=0; i<10; ++i){
-		Qfa[i] = new fifo_T<sc_uint<64>>(nombreId"Qfa", i), 1);
-		Qfb[i] = new fifo_T<sc_uint<64>>(nombreId"Qfb", i), 1);
-		Qr[i] = new fifo_T<sc_uint<64>>(nombreId"Qr", i), 1);
-		Qs[i] = new fifo_T<sc_uint<64>>(nombreId"Qs", i), 1);
-		Qo[i] = new fifo_T<sc_uint<64>>(nombreId"Qo", i), 1);
+void controller::memToOut()
+{
+	for(int i=0; i<256; ++i){
+		addrA->write( (sc_uint<8>) i );        addrB->write( (sc_uint<8>) 0 );
+		wait(SC_ZERO_TIME);
+		for(int j=0; j<11; ++j){
+			fa[j]->read( tmp );
+			OUTRO->write( tmp );
+			if(j<10){
+				fb[j]->read( tmp );    // para vaciar esta cola...
+			}
+			wait(SC_ZERO_TIME);
+		}
 	}
-	Qfa[10] = new fifo_T<sc_uint<64>>(nombreId"Qfa", 10), 1);
-  }
-
-};
+}

@@ -1,3 +1,11 @@
+/*
+ * Declaración de fpMult y fpAdd
+ *
+ * Universidade Da Coruña. 2015
+ *
+ */
+
+
 #ifndef FP_PLANO_H
 #define FP_PLANO_H
 

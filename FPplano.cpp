@@ -1,3 +1,10 @@
+/*
+ * Implementación funciones de fpMult y fpAdd
+ *
+ * Universidade Da Coruña. 2015
+ *
+ */
+
 #include "FPplano.h"
 
 void fpAdd::calculaAdd(){
