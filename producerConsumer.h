@@ -26,17 +26,18 @@ productor( sc_module_name name_, char *fileName) : sc_module(name_)
 	SC_THREAD(main);
 }
 
+
  void main(){
 	int n;
 	T dato;
 	O original;
 	unsigned long long *tmp;
 
-	tmp = (unsigned long long*) (&original);	// así se puede ver el dato original y su representación binaria
+	tmp = (unsigned long long*) (&original);	// así puedo ver el dato original y su representación binaria
 	if(!fichero)	return;
 
 	do{
-		n = fread(&original, LEN, 1, fichero);		
+		n = fread(&original, LEN, 1, fichero);
 		dato = *tmp;
 		entrada->write( dato );
 		wait(SC_ZERO_TIME);
@@ -56,6 +57,7 @@ private:
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+
 
 
 template <class T, class O>
@@ -80,12 +82,12 @@ consumidor( sc_module_name name_, char *fileName) : sc_module(name_)
 
 
  void main(){
-	int n;
+	int n, cont = 0;
 	T res;
 	O original, calculado;
 	unsigned long long *tmp;
 
-	tmp = (unsigned long long*) (&calculado);	// así se puede ver el dato original y su representación binaria
+	tmp = (unsigned long long*) (&calculado);	// así puedo ver el dato original y su representación binaria
 	if(!fichero)	return;
 
 	do{
@@ -94,17 +96,17 @@ consumidor( sc_module_name name_, char *fileName) : sc_module(name_)
 				resultado->read( res );
 				*tmp = res;
 				if(original != calculado)
-					n=n;		// poner punto de ruptura aqui para detectar desacuerdos
+					cout << "XX : " << name() << "  " << original << " <> " << calculado << endl;		// PONER AQUÍ UN BREAKPOINT
+				++cont;
 		}
 		wait(SC_ZERO_TIME);
-	}while(n);	
+	}while(n);
 
 	fclose( fichero );
-	cout << name() << " ha terminado de recibir resultados" << endl;
 
-	sc_stop();
+//	sc_stop();
 
-	// comentar la linea anterior (sc_stop) si se prefiere mantener la ejecución
+	// descomentar la línea anterior si se desea que la simulación se detenga
 	while(true)
 		wait(SC_ZERO_TIME); 
  }
@@ -113,9 +115,5 @@ private:
 	FILE *fichero;
 	int LEN; 
 };
-
-
-
-
 
 #endif
