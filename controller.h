@@ -13,7 +13,7 @@
 
 SC_MODULE (controller) {
 public:
-	// declaración de puertos
+	// declaración de puertos: read y write
 	sc_port<read_if_T<sc_uint<64>>> INTRO;
 	sc_port<read_if_T<sc_uint<8>>> rand1;
 	sc_port<read_if_T<sc_uint<8>>> rand2;
@@ -21,17 +21,27 @@ public:
 	sc_port<read_if_T<sc_uint<10>>> hibridar;
 	sc_port<read_if_T<sc_uint<64>>> fa[11];
 	sc_port<read_if_T<sc_uint<64>>> fb[10];
+	sc_port<read_if_T<bool>> listo;
 
 	sc_port<write_if_T<sc_uint<8>>> addrA;
 	sc_port<write_if_T<sc_uint<8>>> addrB;
 	sc_port<write_if_T<sc_uint<64>>> OUTRO;
 
 	// declaración de métodos
-	void memToOut();
+	void process();
 
 	SC_CTOR (controller) {
 		cout<<"Controller: "<<name()<<endl;
+		SC_THREAD(process);
 	}
 	
 private:
+	// atributos privados
+	sc_uint<64> G; // número de generaciones
+	sc_uint<64> x[10];
+	sc_uint<64> tmp;
+
+	// métodos privados
+	void memToOut();
+	void init();
 };

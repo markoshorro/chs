@@ -1,11 +1,12 @@
 /*
- * Implementación funciones de fpMult y fpAdd
+ * Implementación de las unidades de aritmética y desplazamiento
  *
  * Universidade Da Coruña. 2015
  *
  */
 
 #include "FPplano.h"
+
 
 void fpAdd::calculaAdd(){
 
@@ -31,11 +32,10 @@ void fpAdd::calculaAdd(){
 
 		op1->read(sc1);		op2->read(sc2);	
 
-
 		cero_1 = ( sc1(62, 52) == 0 );		cero_2 = ( sc2(62, 52) == 0 );
 		inf1 = ( sc1(62, 52) == 0x7ff ) || ( sc2(62, 52) == 0x7ff ) ;
 
-		restaExp = sc1(62, 52) - sc2(62, 52); 
+		restaExp = sc1(62, 52) - sc2(62, 52); // verificar esto
 
 		equalExp = (restaExp == 0);
 			
@@ -67,7 +67,7 @@ void fpAdd::calculaAdd(){
 		
 		// etapa 2
 
-		signedNormal = regNormal << 9;		signedNormal.bit(61) = ! ceroA1;
+		signedNormal = regNormal << 9;		signedNormal.bit(61) = ! ceroA1;	// debería ser 62?????
 		signedMovido = regMovido << 9;		signedMovido.bit(61) = ! ceroB1;
 
 		des = desp;
@@ -121,11 +121,11 @@ void fpAdd::calculaAdd(){
 			tmpRes = 0;
 		else{
 			if( inf2 || expo.bit(11) ){
-				tmpRes.bit(63) = regPos2;
+				tmpRes.bit(63) = regPos2;	// tengo dudas sobre esto...
 				tmpRes(62, 52) = 0x7ff;
 				tmpRes(51, 0) = 0;
 			}else{
-				tmpRes.bit(63) = regPos2;
+				tmpRes.bit(63) = regPos2;	// tengo dudas sobre esto...
 				tmpRes(62, 52) = expo(10, 0);
 				tmpRes(51, 0) = mantisa;
 			}
@@ -147,11 +147,10 @@ void fpAdd::calculaAdd(){
 
 
 
-
 void fpMult::calculaMult(){
 
 	sc_uint<11> exp1, exp2, expMult;
-	sc_uint<13> calcExp;
+	sc_uint<13> calcExp;		// lo hago sin signo para convertirlo más fácilmente a VHDL
 	sc_uint<64> sc1, sc2;
 
 	sc_uint<18> A, B, C, D, E, F;
@@ -195,7 +194,7 @@ void fpMult::calculaMult(){
 		Czt = ( (C << 1) + Ct );		Bzt = ( (B << 1) + Bt );		Azt = ( (A << 1) + At );
 
 
-		pre_xyzt.bit(3) = sc1.bit(51) & sc2.bit(51);	
+		pre_xyzt.bit(3) = sc1.bit(51) & sc2.bit(51);	 // hacer la suma me daba problemas con la inferencia del signo de los operandos
 		pre_xyzt.bit(2) = ! pre_xyzt.bit(3);
 		pre_xyzt.bit(1) = sc1.bit(51) ^ sc2.bit(51);
 		pre_xyzt.bit(0) = pre_xyzt.bit(3);
@@ -279,6 +278,131 @@ void fpMult::calculaMult(){
 
 		wait(SC_ZERO_TIME);
 	}
+
+}
+
+
+
+
+
+
+void fpSquare::calculaSquare(){
+
+	sc_uint<11> exp1, expSq;
+	sc_uint<13> calcExp;		// lo hago sin signo para convertirlo más fácilmente a VHDL
+	sc_uint<64> sc1;
+
+	sc_uint<18> A, B, C;
+	sc_uint<18> yA, yB, yC;
+	sc_uint<36> preC2; 
+	sc_uint<34> preCF;
+
+	sc_uint<35> c2_bc;
+	sc_uint<36> ac_b2, trailing;
+	sc_uint<21> F_stuff;
+	sc_uint<36> ab_f;
+	sc_uint<35> xb_a2;
+	sc_uint<22> front, final;
+	sc_uint<36> middle;
+
+	sc_uint<64> scR;
+	sc_uint<52> mantisa;
+
+	while(true){
+
+		// etapa 1
+		
+		op->read(sc1);		
+
+
+		A = sc1(50, 34);		B = sc1(33, 17);		C = sc1(16, 0);
+
+		A2 = ( A * A );		B2 = ( B * B );		preC2 = C * C;	C2 = ( preC2(33, 17) );
+		AB = ( A * B );		BC = ( B * C );		AC = ( A * C );
+
+		if( sc1.bit(51) ){		yA = A;				yB = B;				yC = C;
+		}else{					yA = yB = yC = 0;	}
+
+		xA = ( (A << 1) + yA );		xB = ( (B << 1) + yB );		xC = ( (C << 1) + yC );
+		
+		xy2 = ( sc1.bit(51) ? 9 : 4 ); // 
+
+
+		exp1 = sc1(62, 52);
+		calcExp = (exp1 << 1) +  0x1C01;	// equivale a - 1023;
+
+		if( exp1 == 0 )			
+			regExp1 = ( 0 );
+		else{
+			if( exp1 == 0x7ff )
+				regExp1 = ( 0x7ff );
+			else{
+				if( calcExp.bit(12) )	// negativo, underflow
+					regExp1 = ( 0 );
+				else
+					if( calcExp > 0x7ff )	// underflow
+						regExp1 = ( 0x7ff );
+					else
+						regExp1 = ( calcExp(10, 0) );
+			}
+		}
+
+		// etapa 2
+
+		regExp2 = ( regExp1 );
+
+
+		c2_bc = C2 + (BC(33, 0) << 1) ;
+		ac_b2 = (AC(33, 0) << 1) + B2(33, 0);
+
+		trailing = c2_bc(34, 17) + ac_b2;
+		F_stuff = trailing(35, 17) + (xC << 1);
+
+		ab_f = (AB << 1) + F_stuff + 1;
+		xb_a2 = (xB << 1) + A2;
+
+		front = (xA << 1) + (xy2 << 17);
+
+		middle = xb_a2 + ab_f(34, 17);
+		final = front + middle(35, 17);	
+
+		middleReg = ( middle );
+		finalReg = ( final );
+		ab_f_Reg = ( ab_f(16, 1) );
+
+		// etapa 3
+
+		if( finalReg.bit(20)){	// producto no normalizado
+			expSq = regExp2 + 1;
+			mantisa(51, 32) = finalReg(19, 0);
+			mantisa(31, 15) = middleReg(16, 0);
+			mantisa(14, 0) = ab_f_Reg(15, 1);
+		}else{
+			expSq = regExp2;
+			mantisa(51, 33) = finalReg(18, 0);
+			mantisa(32, 16) = middleReg(16, 0);
+			mantisa(15, 0) = ab_f_Reg;
+		}
+
+		if(regExp2 == 0)
+			scR = 0;
+		else{
+			if(regExp2 == 0x7ff){
+				scR.bit(63) = 0;	scR(62, 52) = 0x7ff;	scR(51, 0) = 0;
+			}else{
+				scR.bit(63) = 0;	scR(62, 52) = expSq;	scR(51, 0) = mantisa;
+			}
+		}
+
+		res =  ( scR );
+
+		// final
+
+		square->write( res );
+
+		wait(SC_ZERO_TIME);
+	}
+
 
 }
 

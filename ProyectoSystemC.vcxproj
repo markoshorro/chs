@@ -85,7 +85,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ejemplo.cpp" />
+    <ClCompile Include="controller.cpp" />
+    <ClCompile Include="diffEvol_threads_MAIN.cpp" />
+    <ClCompile Include="FPplano.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="controller.h" />
+    <ClInclude Include="fifo.h" />
+    <ClInclude Include="FPplano.h" />
+    <ClInclude Include="producerConsumer.h" />
+    <ClInclude Include="producerConsumerMultiple.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
