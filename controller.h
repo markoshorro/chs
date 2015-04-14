@@ -15,16 +15,14 @@ SC_MODULE (controller) {
 public:
 	// declaración de puertos: read y write
 	sc_port<read_if_T<sc_uint<64>>> INTRO;
-	sc_port<read_if_T<sc_uint<8>>> rand1;
-	sc_port<read_if_T<sc_uint<8>>> rand2;
-	sc_port<read_if_T<sc_uint<8>>> rand3;
-	sc_port<read_if_T<sc_uint<10>>> hibridar;
-	sc_port<read_if_T<sc_uint<64>>> fa[11];
-	sc_port<read_if_T<sc_uint<64>>> fb[10];
+	sc_port<read_if_T<sc_uint<8>>> rand1, rand2, rand3;
+	sc_port<read_if_T<sc_uint<16>>> hibridar;
 	sc_port<read_if_T<bool>> listo;
+	sc_port<read_if_T<sc_uint<64>>> fa[11], fb[10];
 
-	sc_port<write_if_T<sc_uint<8>>> addrA;
-	sc_port<write_if_T<sc_uint<8>>> addrB;
+	sc_port<write_if_T<sc_uint<8>>> addrA, addrB;
+	sc_port<write_if_T<sc_uint<64>>> iniVal, iniRes;
+	sc_port<write_if_T<sc_uint<64>>> r[10], s[10], o[10];
 	sc_port<write_if_T<sc_uint<64>>> OUTRO;
 
 	// declaración de métodos
