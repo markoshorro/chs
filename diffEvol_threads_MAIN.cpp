@@ -96,7 +96,7 @@ class top : public sc_module
 			QaddrB = new fifo_T<sc_uint<8>>("addrB", 1);
 			QiniVal = new fifo_T<sc_uint<64>>("iniVal", 1);
 			QiniRes = new fifo_T<sc_uint<64>>("iniRes", 1);
-			for(i=0; i<10; ++i){
+			for(i=0; i<10; i++){
 				Qr[i] = new fifo_T<sc_uint<64>>(nombreIdx("Qr", i), 1);
 				Qs[i] = new fifo_T<sc_uint<64>>(nombreIdx("Qs", i), 1);
 				Qo[i] = new fifo_T<sc_uint<64>>(nombreIdx("Qo", i), 1);
@@ -183,6 +183,8 @@ int sc_main(int nargs, char* vargs[])
 {
 	top principalDE("top");
 	sc_start();
+
+	cout << "Programa finalizado" << endl;
 
 	return 0;
 }
