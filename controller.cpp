@@ -22,14 +22,53 @@
  */
 void controller::process()
 {
-	int i,j;
-	
+	int i,j, k;
+	bool cont;
+	sc_uint<8> addr1, addr2;
+	sc_uint<10> mask;
+
 	init(); // inicialización de datos
 
-	for(i=0;i<G;i++) {
-		for(j=0;j<256;i++) {
-		}
+	for(i=0; i<G; i++) {
+		for(j=0; j<256; j++) {
+			// Pidiendo valores de las soluciones rand1 y rand2
+			rand1->read( addr1 );		   rand2->read( addr2 );
+			addrA->write( addr1 );        addrB->write( addr2 );
+			wait(SC_ZERO_TIME);
+			for(k=0; k<10; k++) {
+				fa[i]->read(A[i]);
+				fb[i]->read(B[i]);
+				wait(SC_ZERO_TIME);
+			}
+			// Pidiendo valores de la solución original e indicada por rand3
+			rand3->read( addr2 );
+			addrA->write( (sc_uint<8>) i );        addrB->write( addr2 );
+			wait(SC_ZERO_TIME);
+			for(k=0; k<10; k++) {
+				fa[i]->read(O[i]);
+				fb[i]->read(C[i]);
+				wait(SC_ZERO_TIME);
+			}
+			// Leyendo máscara de hibridación
+			hibridar->read( mask );
+			for(k=0; k<10; k++) {
+				if (mask.bit(i)) {
+					r[i]->write(A[i]);
+					r[i]->write(B[i]);
+					r[i]->write(C[i]);
+				} else {
+					r[i]->write(A[i]);
+					r[i]->write(-A[i]);
+					r[i]->write(O[i]);					
+				}
+			}
+
+		} 
+		// 256 individuos
+		cont = false;
+		while(!cont) { listo->read(cont); }
 	}
+	// G generaciones
 
 	memToOut(); // sacamos por salida OUTRO tras G generaciones
 }
@@ -41,6 +80,7 @@ void controller::init()
 {
 	int i,j;
 	sc_uint<64> iniFCoste;
+	sc_uint<64> x[10];
 
 	INTRO->read(G); // leemos número de generaciones
 	for(i=0;i<256;i++) {

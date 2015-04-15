@@ -16,7 +16,7 @@ public:
 	// declaración de puertos: read y write
 	sc_port<read_if_T<sc_uint<64>>> INTRO;
 	sc_port<read_if_T<sc_uint<8>>> rand1, rand2, rand3;
-	sc_port<read_if_T<sc_uint<16>>> hibridar;
+	sc_port<read_if_T<sc_uint<10>>> hibridar;
 	sc_port<read_if_T<bool>> listo;
 	sc_port<read_if_T<sc_uint<64>>> fa[11], fb[10];
 
@@ -36,8 +36,10 @@ public:
 private:
 	// atributos privados
 	sc_uint<64> G; // número de generaciones
-	sc_uint<64> x[10]; // valores 
-	sc_uint<64> iniFCoste; // valor inicial función de coste
+	sc_uint<64> A[10];
+	sc_uint<64> B[10];
+	sc_uint<64> C[10];
+	sc_uint<64> O[10];
 
 	// métodos privados
 	void memToOut();
