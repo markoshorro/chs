@@ -7,21 +7,31 @@
  * Christian Ponte
  */
 
+/*
+ * NOTA: se han añadido periódicamente, en todos los bucles,
+ *       la función wait(SC_ZERO_TIME) para intentar mejorar
+ *       el funcionamiento de SystemC
+ */
+
 #include "controller.h"
 
 /*
- * Esta función realiza el proceso de generar las G poblaciones
+ * Funciona a modo de main, dado que delega la inicialización en
+ * un método init, realiza las G generaciones y finaliza enviando
+ * los datos por salida.
  */
 void controller::process()
 {
 	int i,j;
 	
-	init(); // primera iteración
+	init(); // inicialización de datos
 
 	for(i=0;i<G;i++) {
 		for(j=0;j<256;i++) {
 		}
 	}
+
+	memToOut(); // sacamos por salida OUTRO tras G generaciones
 }
 
 /*
@@ -29,9 +39,18 @@ void controller::process()
  */
 void controller::init()
 {
+	int i,j;
+	sc_uint<64> iniFCoste;
+
 	INTRO->read(G); // leemos número de generaciones
-	for(int i=0;i<10;i++) {
-		INTRO->read(x[i]); // leemos valores iniciales
+	for(i=0;i<256;i++) {
+		for(j=0;j<10;j++) {
+			INTRO->read(x[j]); // leemos valores iniciales
+			iniVal->write(x[j]); // los mandamos a memoria
+			wait(SC_ZERO_TIME);
+		}
+		INTRO->read(iniFCoste);
+		iniRes->write(iniFCoste);
 		wait(SC_ZERO_TIME);
 	}
 }
@@ -42,10 +61,13 @@ void controller::init()
  */
 void controller::memToOut()
 {
-	for(int i=0; i<256; ++i){
+	int i,j;
+	sc_uint<64> tmp;
+
+	for(i=0; i<256; ++i){
 		addrA->write( (sc_uint<8>) i );        addrB->write( (sc_uint<8>) 0 );
 		wait(SC_ZERO_TIME);
-		for(int j=0; j<11; ++j){
+		for(j=0; j<11; ++j){
 			fa[j]->read( tmp );
 			OUTRO->write( tmp );
 			if(j<10){

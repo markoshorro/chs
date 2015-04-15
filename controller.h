@@ -36,8 +36,8 @@ public:
 private:
 	// atributos privados
 	sc_uint<64> G; // número de generaciones
-	sc_uint<64> x[10];
-	sc_uint<64> tmp;
+	sc_uint<64> x[10]; // valores 
+	sc_uint<64> iniFCoste; // valor inicial función de coste
 
 	// métodos privados
 	void memToOut();
