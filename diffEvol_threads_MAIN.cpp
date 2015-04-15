@@ -49,7 +49,7 @@ class top : public sc_module
 		fifo_T<sc_uint<64>> *qINTRO;
 		fifo_T<sc_uint<8>> *Qrand1, *Qrand2, *Qrand3;
 		fifo_T<bool> *Qlisto;
-		fifo_T<sc_uint<16>> *Qhibridar;
+		fifo_T<sc_uint<10>> *Qhibridar;
 		fifo_T<sc_uint<64>> *Qfa[11], *Qfb[10];
 
 		// Salidas de controlador
@@ -61,7 +61,7 @@ class top : public sc_module
 		// Productores de cada cola de entrada
 		productor<sc_uint<64>, double> *pINTRO;
 		productor<sc_uint<8>, unsigned char> *Prand1, *Prand2, *Prand3;
-		productor<sc_uint<16>, unsigned int> *Phibridar;
+		productor<sc_uint<10>, unsigned int> *Phibridar;
 		productor<bool, bool> *Plisto;
 		productorMultiple<sc_uint<64>, double, 11> *Pfa;
 		productorMultiple<sc_uint<64>, double, 10> *Pfb;
@@ -81,7 +81,7 @@ class top : public sc_module
 			Qrand1 = new fifo_T<sc_uint<8>>("rand1", 1);
 			Qrand2 = new fifo_T<sc_uint<8>>("rand2", 1);
 			Qrand3 = new fifo_T<sc_uint<8>>("rand3", 1);
-			Qhibridar = new fifo_T<sc_uint<16>>("hibridar", 1);
+			Qhibridar = new fifo_T<sc_uint<10>>("hibridar", 1);
 			Qlisto = new fifo_T<bool>("listo", 1);
 			for (int i=0; i<10; i++)
 				Qfa[i] = new fifo_T<sc_uint<64>>(nombreIdx("Qfa", i), 1);
@@ -101,11 +101,11 @@ class top : public sc_module
 			qOUTRO = new fifo_T<sc_uint<64>>("OUTRO", 1);
 
 			// Instanciación de los productores
-			pINTRO = new productor<sc_uint<64>, double>("INTRO", fINTRO);
+			pINTRO = new productor<sc_uint<64>, double>("INTRO", (char) fINTRO);
 			Prand1 = new productor<sc_uint<8>, unsigned char>("rand1", Frand1);
 			Prand2 = new productor<sc_uint<8>, unsigned char>("rand2", Frand2);
 			Prand3 = new productor<sc_uint<8>, unsigned char>("rand3", Frand3);
-			Phibridar = new productor<sc_uint<16>, unsigned int>("hibridar", Fhibridar);
+			Phibridar = new productor<sc_uint<10>, unsigned int>("hibridar", Fhibridar);
 			Plisto = new productor<bool, bool>("listo", Flisto);
 			Pfa = new productorMultiple<sc_uint<64>, double, 11>("fa", Ffa);
 			Pfb = new productorMultiple<sc_uint<64>, double, 10>("fb", Ffb);
