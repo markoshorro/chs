@@ -16,24 +16,24 @@
 #include "producerConsumerMultiple.h"
 
 // Nombres de ficheros de entrada
-const char *fINTRO = "benchMover_fileEntradaDE.dat";
-const char *Frand1 = "benchMover_fileRandom8bits_1.dat";
-const char *Frand2 = "benchMover_fileRandom8bits_2.dat";
-const char *Frand3 = "benchMover_fileRandom8bits_3.dat";
-const char *Fhibridar = "benchMover_fileHibridar.dat";
-const char *Flisto = "benchMover_fileListo.dat";
-const char *Ffa = "benchMover_fileFA.dat";
-const char *Ffb = "benchMover_fileFB.dat";
+char *fINTRO = "benchMover_fileEntradaDE.dat";
+char *Frand1 = "benchMover_fileRandom8bits_1.dat";
+char *Frand2 = "benchMover_fileRandom8bits_2.dat";
+char *Frand3 = "benchMover_fileRandom8bits_3.dat";
+char *Fhibridar = "benchMover_fileHibridar.dat";
+char *Flisto = "benchMover_fileListo.dat";
+char *Ffa = "benchMover_fileFA.dat";
+char *Ffb = "benchMover_fileFB.dat";
 
 // Nombres de ficheros de salida
-const char *FaddrA = "benchMover_fileAddrA.dat";
-const char *FaddrB = "benchMover_fileAddrB.dat";
-const char *FiniVal = "benchMover_fileIniVal.dat";
-const char *FiniRes = "benchMover_fileIniRes.dat";
-const char *Fr = "benchMover_fileR.dat";
-const char *Fs = "benchMover_fileS.dat";
-const char *Fo = "benchMover_fileO.dat";
-const char *fOUTRO = "benchMover_fileSalidaDE.dat";
+char *FaddrA = "benchMover_fileAddrA.dat";
+char *FaddrB = "benchMover_fileAddrB.dat";
+char *FiniVal = "benchMover_fileIniVal.dat";
+char *FiniRes = "benchMover_fileIniRes.dat";
+char *Fr = "benchMover_fileR.dat";
+char *Fs = "benchMover_fileS.dat";
+char *Fo = "benchMover_fileO.dat";
+char *fOUTRO = "benchMover_fileSalidaDE.dat";
 
 char* nombreIdx(char *cad, int idx)
 {
@@ -76,6 +76,7 @@ class top : public sc_module
 
 		SC_CTOR(top) // the module constructor
 		{
+			int i;
 			// Instanciación de las colas de entrada
 			qINTRO = new fifo_T<sc_uint<64>>("INTRO", 1);
 			Qrand1 = new fifo_T<sc_uint<8>>("rand1", 1);
@@ -83,17 +84,19 @@ class top : public sc_module
 			Qrand3 = new fifo_T<sc_uint<8>>("rand3", 1);
 			Qhibridar = new fifo_T<sc_uint<10>>("hibridar", 1);
 			Qlisto = new fifo_T<bool>("listo", 1);
-			for (int i=0; i<10; i++)
+			for (i=0; i<11; i++) {
 				Qfa[i] = new fifo_T<sc_uint<64>>(nombreIdx("Qfa", i), 1);
-			for (int i=0; i<11; i++)
+			}
+			for (i=0; i<10; i++) {
 				Qfb[i] = new fifo_T<sc_uint<64>>(nombreIdx("Qfb", i), 1);
+			}
 
 			// Instanciación de las colas de salida
 			QaddrA = new fifo_T<sc_uint<8>>("addrA", 1);
 			QaddrB = new fifo_T<sc_uint<8>>("addrB", 1);
 			QiniVal = new fifo_T<sc_uint<64>>("iniVal", 1);
 			QiniRes = new fifo_T<sc_uint<64>>("iniRes", 1);
-			for(int i=0; i<10; ++i){
+			for(i=0; i<10; ++i){
 				Qr[i] = new fifo_T<sc_uint<64>>(nombreIdx("Qr", i), 1);
 				Qs[i] = new fifo_T<sc_uint<64>>(nombreIdx("Qs", i), 1);
 				Qo[i] = new fifo_T<sc_uint<64>>(nombreIdx("Qo", i), 1);
@@ -101,7 +104,7 @@ class top : public sc_module
 			qOUTRO = new fifo_T<sc_uint<64>>("OUTRO", 1);
 
 			// Instanciación de los productores
-			pINTRO = new productor<sc_uint<64>, double>("INTRO", (char) fINTRO);
+			pINTRO = new productor<sc_uint<64>, double>("INTRO", fINTRO);
 			Prand1 = new productor<sc_uint<8>, unsigned char>("rand1", Frand1);
 			Prand2 = new productor<sc_uint<8>, unsigned char>("rand2", Frand2);
 			Prand3 = new productor<sc_uint<8>, unsigned char>("rand3", Frand3);
@@ -130,17 +133,19 @@ class top : public sc_module
 			Prand3->entrada(*Qrand3);
 			Phibridar->entrada(*Qhibridar);
 			Plisto->entrada(*Qlisto);
-			for (int i=0; i<11; i++)
-				Pfa->entrada[i](*Qfa[i]);
-			for (int i=0; i<10; i++)
-				Pfb->entrada[i](*Qfb[i]);
+			for (i=0; i<11; i++) {
+				Pfa->entrada[i](*(Qfa[i]));
+			}
+			for (i=0; i<10; i++) {
+				Pfb->entrada[i](*(Qfb[i]));
+			}
 
 			// Conexión consumidores
 			CaddrA->resultado(*QaddrA);
 			CaddrB->resultado(*QaddrB);
 			CiniVal->resultado(*QiniVal);
 			CiniRes->resultado(*QiniRes);
-			for (int i=0; i<10; i++){
+			for (i=0; i<10; i++){
 				Cr->resultado[i](*Qr[i]);
 				Cs->resultado[i](*Qs[i]);
 				Co->resultado[i](*Qo[i]);
@@ -154,15 +159,17 @@ class top : public sc_module
 			instController->rand3(*Qrand3);
 			instController->hibridar(*Qhibridar);
 			instController->listo(*Qlisto);
-			for (int i=0; i<11; i++)
+			for (i=0; i<11; i++) {
 				instController->fa[i](*Qfa[i]);
-			for (int i=0; i<10; i++)
+			}
+			for (i=0; i<10; i++) {
 				instController->fb[i](*Qfb[i]);
+			}
 			instController->addrA(*QaddrA);
 			instController->addrB(*QaddrB);
 			instController->iniVal(*QiniVal);
 			instController->iniRes(*QiniRes);
-			for (int i=0; i<10; i++){
+			for (i=0; i<10; i++){
 				instController->r[i](*Qr[i]);
 				instController->s[i](*Qs[i]);
 				instController->o[i](*Qo[i]);

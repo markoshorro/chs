@@ -22,14 +22,14 @@
  */
 void controller::process()
 {
-	int i,j, k;
+	int i,j, k, g = G.to_int64();
 	bool cont;
 	sc_uint<8> addr1, addr2;
 	sc_uint<10> mask;
 
 	init(); // inicialización de datos
 
-	for(i=0; i<G; i++) {
+	for(i=0; i<g; i++) {
 		for(j=0; j<256; j++) {
 			// Pidiendo valores de las soluciones rand1 y rand2
 			rand1->read( addr1 );		   rand2->read( addr2 );
@@ -61,12 +61,14 @@ void controller::process()
 					r[i]->write(-A[i]);
 					r[i]->write(O[i]);					
 				}
+				wait(SC_ZERO_TIME);
 			}
-
+			wait(SC_ZERO_TIME);
 		} 
 		// 256 individuos
 		cont = false;
 		while(!cont) { listo->read(cont); }
+		wait(SC_ZERO_TIME);
 	}
 	// G generaciones
 
