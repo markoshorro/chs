@@ -36,9 +36,9 @@ public:
 private:
 	// atributos privados
 	sc_uint<64> G; // número de generaciones
-	sc_uint<64> A[10];
+	sc_uint<64> A[11];
 	sc_uint<64> B[10];
-	sc_uint<64> C[10];
+	sc_uint<64> C[11];
 	sc_uint<64> O[10];
 
 	// métodos privados
