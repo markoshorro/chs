@@ -61,7 +61,7 @@ class top : public sc_module
 		// Productores de cada cola de entrada
 		productor<sc_uint<64>, double> *pINTRO;
 		productor<sc_uint<8>, unsigned char> *Prand1, *Prand2, *Prand3;
-		productor<sc_uint<10>, unsigned int> *Phibridar;
+		productor<sc_uint<10>, unsigned short> *Phibridar;
 		productor<bool, bool> *Plisto;
 		productorMultiple<sc_uint<64>, double, 11> *Pfa;
 		productorMultiple<sc_uint<64>, double, 10> *Pfb;
@@ -108,7 +108,7 @@ class top : public sc_module
 			Prand1 = new productor<sc_uint<8>, unsigned char>("rand1", Frand1);
 			Prand2 = new productor<sc_uint<8>, unsigned char>("rand2", Frand2);
 			Prand3 = new productor<sc_uint<8>, unsigned char>("rand3", Frand3);
-			Phibridar = new productor<sc_uint<10>, unsigned int>("hibridar", Fhibridar);
+			Phibridar = new productor<sc_uint<10>, unsigned short>("hibridar", Fhibridar);
 			Plisto = new productor<bool, bool>("listo", Flisto);
 			Pfa = new productorMultiple<sc_uint<64>, double, 11>("fa", Ffa);
 			Pfb = new productorMultiple<sc_uint<64>, double, 10>("fb", Ffb);

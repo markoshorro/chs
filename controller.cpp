@@ -22,7 +22,7 @@
  */
 void controller::process()
 {
-	sc_uint<8> i=0, j=0, k=0;
+	int i=0, j=0, k=0;
 	bool cont; 
 	sc_uint<8> addr1, addr2, addr3;
 	sc_uint<10> mask;
@@ -32,7 +32,6 @@ void controller::process()
 
 	for(i=0; i<G; i++) {
 		for(j=0; j<256; j++) {
-
 			// Pidiendo valores de las soluciones rand1 y rand2
 			rand1->read( addr1 );		   rand2->read( addr2 );
 			addrA->write( addr1 );        addrB->write( addr2 );
@@ -60,17 +59,14 @@ void controller::process()
 			for(k=0; k<10; k++) {
 				if (mask.bit(k)) {
 					tmp = B[k];
-					tmp.bit(63) = !tmp.bit(63);
-					r[k]->write(A[k]);
-					s[k]->write(tmp);
 					o[k]->write(C[k]);
 				} else {
 					tmp = A[k];
-					tmp.bit(63) = !tmp.bit(63);
-					r[k]->write(A[k]);
-					s[k]->write(tmp);
 					o[k]->write(O[k]);					
 				}
+				tmp.bit(63) = !tmp.bit(63);
+				s[k]->write(tmp);
+				r[k]->write(A[k]);
 				wait(SC_ZERO_TIME);
 			}
 		} 
@@ -92,7 +88,6 @@ void controller::init()
 	int i,j;
 	sc_uint<64> tmp;
 
-	wait(SC_ZERO_TIME);
 	INTRO->read(G); // leemos número de generaciones
 	for(i=0;i<256;i++) {	
 		for(j=0;j<10;j++) {
@@ -100,12 +95,12 @@ void controller::init()
 			iniVal->write(tmp); // los mandamos a memoria
 			wait(SC_ZERO_TIME);
 		}
-		INTRO->read(tmp);
-		iniRes->write(tmp);
+		INTRO->read(tmp); // leemos los valos de función de coste
+		iniRes->write(tmp); // los mandamos a memoria
 		wait(SC_ZERO_TIME);
 	}
+	wait(SC_ZERO_TIME);
 }
-
 
 /*
  * Esta función realiza el proceso de enviar a la salida
