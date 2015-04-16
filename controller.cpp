@@ -32,16 +32,18 @@ void controller::process()
 
 	for(i=0; i<G; i++) {
 		for(j=0; j<256; j++) {
+
 			// Pidiendo valores de las soluciones rand1 y rand2
 			rand1->read( addr1 );		   rand2->read( addr2 );
 			addrA->write( addr1 );        addrB->write( addr2 );
 			wait(SC_ZERO_TIME);
-			for(k=0; k<11; k++) { // vaciar undécimo resultado de dataA
+			for(k=0; k<10; k++) { 
 				fa[k]->read(A[k]);
 				fb[k]->read(B[k]);
 				wait(SC_ZERO_TIME);
 			}
-			fa[10]->read(A[10]);
+			fa[10]->read(A[10]); // vaciar undécimo resultado de dataA
+
 			// Pidiendo valores de la solución original e indicada por rand3
 			rand3->read( addr3 );
 			addrA->write( (sc_uint<8>) j );        addrB->write( addr3 );
@@ -51,18 +53,22 @@ void controller::process()
 				fb[k]->read(C[k]); // vaciar undécimo resultado de dataA
 				wait(SC_ZERO_TIME);
 			}
-			fa[10]->read(tmp); // vaciar undécimo resultado de dataA
+			fa[10]->read(O[10]); // vaciar undécimo resultado de dataA
 
 			// Leyendo máscara de hibridación
 			hibridar->read( mask );
 			for(k=0; k<10; k++) {
 				if (mask.bit(k)) {
+					tmp = B[k];
+					tmp.bit(63) = !tmp.bit(63);
 					r[k]->write(A[k]);
-					s[k]->write(B[k]);
+					s[k]->write(tmp);
 					o[k]->write(C[k]);
 				} else {
+					tmp = A[k];
+					tmp.bit(63) = !tmp.bit(63);
 					r[k]->write(A[k]);
-					s[k]->write(-(A[k]));
+					s[k]->write(tmp);
 					o[k]->write(O[k]);					
 				}
 				wait(SC_ZERO_TIME);

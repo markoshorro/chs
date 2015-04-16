@@ -39,7 +39,7 @@ private:
 	sc_uint<64> A[11];
 	sc_uint<64> B[10];
 	sc_uint<64> C[10];
-	sc_uint<64> O[10];
+	sc_uint<64> O[11];
 
 	// métodos privados
 	void memToOut();
