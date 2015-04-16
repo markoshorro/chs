@@ -78,6 +78,8 @@ void controller::process()
 	// G generaciones
 
 	memToOut(); // sacamos por salida OUTRO tras G generaciones
+
+	cout << "Fin proceso!" << endl;
 }
 
 /*

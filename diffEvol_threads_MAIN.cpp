@@ -184,7 +184,5 @@ int sc_main(int nargs, char* vargs[])
 	top principalDE("top");
 	sc_start();
 
-	cout << "Programa finalizado" << endl;
-
 	return 0;
 }
