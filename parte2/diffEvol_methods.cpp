@@ -38,18 +38,17 @@ SC_CTOR(top) // the module constructor
 	datosX->reset(reset);	
 	datosX->leido(leido);	
 	datosX->valid(validX);	
-	for(i=0; i<10; ++i)			
+	for(i=0; i<10; ++i) {			
 		datosX->entrada[i]( sigX[i] );
+	}
 
-
-	instCalculosDE->clk(clk);
-	instCalculosDE->reset(reset);
+	instCalculosDE->clk( clk );
+	instCalculosDE->reset( reset );
 	instCalculosDE->resultado( sigRes );
 	instCalculosDE->valRes( valRes );
-	for(i=0; i<10; ++i){
-		//////////////////////////////////////////
-		// REALIZAR AQUÍ LAS CONEXIONES QUE FALTAN
-		//////////////////////////////////////////
+	for(i=0; i<10; ++i) {
+		instCalculosDE->X[i]( sigX[i] );
+		instCalculosDE->valX[i]( validX );
 	}
 
 	resultados->clk(clk);
@@ -57,12 +56,7 @@ SC_CTOR(top) // the module constructor
 	resultados->valid(valRes);
 	resultados->resultado(sigRes);
 
-
-
 	leido.write( true );	// solo válido para probar módulos sueltos
-
-
-
 }
 
 };
