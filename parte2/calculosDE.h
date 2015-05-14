@@ -37,8 +37,8 @@ SC_MODULE (calculosDE) {
 
 	smallDelay_T<sc_uint<64>, 3> *retardoX1, *retardoX5, *retardoS3;
 	smallDelay_T<sc_uint<64>, 6> *retardoX0;
-	smallDelay_T<sc_uint<64>, 3> *retardoS1, *retardoF3;
-	smallDelay_T<sc_uint<64>, 7> *retardoF4;
+	smallDelay_T<sc_uint<64>, 1> *retardoS1, *retardoF3;
+	smallDelay_T<sc_uint<64>, 5> *retardoF4;
 
 	  void arreglarDatos();
 
@@ -66,9 +66,9 @@ SC_MODULE (calculosDE) {
 			retardoX5 = new smallDelay_T<sc_uint<64>,  3>("retardoX5");
 			retardoS3 = new smallDelay_T<sc_uint<64>,  3>("retardoS3"); 
 			retardoX0 = new smallDelay_T<sc_uint<64>,  6>("retardoX0"); 
-			retardoS1 = new smallDelay_T<sc_uint<64>,  3>("retardoS1");
-			retardoF3 = new smallDelay_T<sc_uint<64>,  3>("retardoF3");
-			retardoF4 = new smallDelay_T<sc_uint<64>,  6>("retardoF4");
+			retardoS1 = new smallDelay_T<sc_uint<64>,  1>("retardoS1");
+			retardoF3 = new smallDelay_T<sc_uint<64>,  1>("retardoF3");
+			retardoF4 = new smallDelay_T<sc_uint<64>,  5>("retardoF4");
 
 			// CONEXIONES DE SEÑALES DE SINCRONIZACIÓN
 			multF5a->clk(clk);			multF2a->clk(clk);			multF5b->clk(clk);			multF2b->clk(clk);
