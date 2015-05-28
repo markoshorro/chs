@@ -1,10 +1,3 @@
-/*
- * Implementación de las unidades de aritmética y desplazamiento
- *
- * Universidade Da Coruña. 2015
- *
- */
-
 #include "FPplano.h"
 
 
@@ -35,7 +28,7 @@ void fpAdd::calculaAdd(){
 		cero_1 = ( sc1(62, 52) == 0 );		cero_2 = ( sc2(62, 52) == 0 );
 		inf1 = ( sc1(62, 52) == 0x7ff ) || ( sc2(62, 52) == 0x7ff ) ;
 
-		restaExp = sc1(62, 52) - sc2(62, 52); // verificar esto
+		restaExp = sc1(62, 52) - sc2(62, 52); 
 
 		equalExp = (restaExp == 0);
 			
@@ -67,7 +60,7 @@ void fpAdd::calculaAdd(){
 		
 		// etapa 2
 
-		signedNormal = regNormal << 9;		signedNormal.bit(61) = ! ceroA1;	// debería ser 62?????
+		signedNormal = regNormal << 9;		signedNormal.bit(61) = ! ceroA1;	
 		signedMovido = regMovido << 9;		signedMovido.bit(61) = ! ceroB1;
 
 		des = desp;
@@ -121,11 +114,11 @@ void fpAdd::calculaAdd(){
 			tmpRes = 0;
 		else{
 			if( inf2 || expo.bit(11) ){
-				tmpRes.bit(63) = regPos2;	// tengo dudas sobre esto...
+				tmpRes.bit(63) = regPos2;	
 				tmpRes(62, 52) = 0x7ff;
 				tmpRes(51, 0) = 0;
 			}else{
-				tmpRes.bit(63) = regPos2;	// tengo dudas sobre esto...
+				tmpRes.bit(63) = regPos2;	
 				tmpRes(62, 52) = expo(10, 0);
 				tmpRes(51, 0) = mantisa;
 			}
@@ -405,5 +398,3 @@ void fpSquare::calculaSquare(){
 
 
 }
-
-

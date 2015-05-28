@@ -100,7 +100,7 @@ consumidorMultiple( sc_module_name name_, char *fileName) : sc_module(name_)
 					resultado[i]->read( res );
 					*tmp = res;
 					if(original != calculado)
-						cout << "XX : " << name() << "  " << original << " <> " << calculado << endl;	// PONER AQUÍ UN BREAKPOINT
+						n=n;
 			}
 		}
 		wait(SC_ZERO_TIME);
@@ -109,7 +109,7 @@ consumidorMultiple( sc_module_name name_, char *fileName) : sc_module(name_)
 	fclose( fichero );
 	//sc_stop();
 
-	// descomentar la línea anterior si se desea que la simulación se detenga
+	// borrar la línea anterior si se desea que la simulación continue
 	while(true)
 		wait(SC_ZERO_TIME); 
  }
