@@ -62,6 +62,8 @@ SC_CTOR(top) // the module constructor
 	datoS->clk(clk);	datoS->reset(reset);	datoS->leido(leido);	datoS->valid(validS);	for(i=0; i<10; ++i)			datoS->entrada[i]( sigS[i] );
 	datoO->clk(clk);	datoO->reset(reset);	datoO->leido(leido);	datoO->valid(validO);	for(i=0; i<10; ++i)			datoO->entrada[i]( sigO[i] );
 
+	leido.write(true); // necesario para que el productor avance
+
 	instHib->clk(clk);
 	instHib->reset(reset);
 	instHib->validRSO( validR ); // sirve uno cualquiera: R, S u O
@@ -73,7 +75,6 @@ SC_CTOR(top) // the module constructor
 		// OUT
 		instHib->hibridas[i]( sigHib[i] );
 		instHib->validH[i]( valHib[i] );
-
 	}
 
 	instCheck->clk(clk);

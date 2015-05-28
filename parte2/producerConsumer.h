@@ -111,10 +111,12 @@ consumidor( sc_module_name name_, char *fileName) : sc_module(name_)
 			tmp = (unsigned long long*) (&calculado);
 			*tmp = res;
 			n = fread(&original, LEN, 1, fichero);
-			if(original != calculado)
+			if(original != calculado) {
+				cout << "error: " << original << "!=" << calculado << std::endl;
 				++contBAD;
-			else
+			} else {
 				++contOK;
+			}
 		}else{
 			if(lastWasValid){
 				cout << name() << " " << contOK << " datos correctos recibidos. " << contBAD << " incorrectos @ " << sc_time_stamp() << endl;
