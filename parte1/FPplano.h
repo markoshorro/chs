@@ -1,18 +1,93 @@
-/*
- * Declaración de las unidades de aritmética y desplazamiento
- *
- * Universidade Da Coruña. 2015
- *
- */
-
-
 #ifndef FP_PLANO_H
 #define FP_PLANO_H
 
 #include "systemc.h"
 #include "fifo.h"
 
+SC_MODULE (fpMinimo) {
+public:
+sc_port<read_if_T<sc_uint<64>>>  op1, op2;
+sc_port<write_if_T<sc_uint<64>>>  minimo;
 
+  void calculaMinimo(){
+	  bool expMenor, expIgual, mantMenor, preMenor, esMenor;
+	  sc_uint<64> sc1, sc2;
+
+	  while(true){
+		  op1->read(sc1);	op2->read(sc2);
+		  expMenor = sc1(62, 52) < sc2(62, 52);
+		  expIgual = sc1(62, 52) == sc2(62, 52);
+		  mantMenor = sc1(51, 0) < sc2(51, 0);
+		  preMenor = expMenor || (mantMenor && expIgual);
+		  esMenor = (sc1.bit(63) != sc2.bit(63)) ? sc1.bit(63) : (sc1.bit(63) ^ preMenor);
+		  minimo->write( esMenor ? sc1 : sc2);
+		  wait(SC_ZERO_TIME);
+	  }
+  }
+  SC_CTOR(fpMinimo) {
+    cout<<"fpMinimo: "<<name()<<endl;
+    SC_THREAD(calculaMinimo);
+
+  } 
+}; 
+
+
+SC_MODULE (fpMenor) {
+public:
+sc_port<read_if_T<sc_uint<64>>>  op1, op2;
+sc_port<write_if_T<bool>>  menor;	// false: op1 es menor	true: op2 es menor
+
+  void calculaMinimo(){
+	  bool expMenor, expIgual, mantMenor, preMenor, esMenor;
+	  sc_uint<64> sc1, sc2;
+
+	  while(true){
+		  op1->read(sc1);	op2->read(sc2);
+		  expMenor = sc1(62, 52) < sc2(62, 52);
+		  expIgual = sc1(62, 52) == sc2(62, 52);
+		  mantMenor = sc1(51, 0) < sc2(51, 0);
+		  preMenor = expMenor || (mantMenor && expIgual);
+		  esMenor = (sc1.bit(63) != sc2.bit(63)) ? sc1.bit(63) : (sc1.bit(63) ^ preMenor);
+		  menor->write( !esMenor );
+		  wait(SC_ZERO_TIME);
+	  }
+  }
+  SC_CTOR(fpMenor) {
+    cout<<"fpMenor: "<<name()<<endl;
+    SC_THREAD(calculaMinimo);
+
+  } 
+}; 
+
+
+
+
+SC_MODULE (fpMaximo) {
+public:
+sc_port<read_if_T<sc_uint<64>>>  op1, op2;
+sc_port<write_if_T<sc_uint<64>>>  maximo;
+
+  void calculaMaximo(){
+	  bool expMenor, expIgual, mantMenor, preMenor, esMenor;
+	  sc_uint<64> sc1, sc2;
+
+	  while(true){
+		  op1->read(sc1);	op2->read(sc2);
+		  expMenor = sc1(62, 52) < sc2(62, 52);
+		  expIgual = sc1(62, 52) == sc2(62, 52);
+		  mantMenor = sc1(51, 0) < sc2(51, 0);
+		  preMenor = expMenor || (mantMenor && expIgual);
+		  esMenor = (sc1.bit(63) != sc2.bit(63)) ? sc1.bit(63) : (sc1.bit(63) ^ preMenor);
+		  maximo->write( esMenor ? sc2 : sc1);
+		  wait(SC_ZERO_TIME);
+	  }
+  }
+  SC_CTOR(fpMaximo) {
+    cout<<"fpMaximo: "<<name()<<endl;
+    SC_THREAD(calculaMaximo);
+
+  } 
+}; 
 
 SC_MODULE (fpMult) {	
 public:
@@ -52,7 +127,7 @@ sc_port<write_if_T<sc_uint<64>>>  suma;
 
 	sc_uint<52> regNormal, regMovido;
 	bool regPos1, regPos2;
-	bool ceroA1, ceroB1, ceroA2, ceroB2;	// harán falta los segundos?
+	bool ceroA1, ceroB1, ceroA2, ceroB2;	
 	bool inf1, inf2;
 	sc_uint<7> desp;
 	bool regSig1, regSig2; 

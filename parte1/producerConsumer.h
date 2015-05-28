@@ -82,10 +82,12 @@ consumidor( sc_module_name name_, char *fileName) : sc_module(name_)
 
 
  void main(){
-	int n, cont = 0;
+	int n;
 	T res;
 	O original, calculado;
 	unsigned long long *tmp;
+
+	int errores = 0;
 
 	tmp = (unsigned long long*) (&calculado);	// así puedo ver el dato original y su representación binaria
 	if(!fichero)	return;
@@ -95,18 +97,21 @@ consumidor( sc_module_name name_, char *fileName) : sc_module(name_)
 		if(n){
 				resultado->read( res );
 				*tmp = res;
-				if(original != calculado)
-					cout << "XX : " << name() << "  " << original << " <> " << calculado << endl;		// PONER AQUÍ UN BREAKPOINT
-				++cont;
+				if(original != calculado){
+					cout << original << " - " << calculado << endl;
+					errores++;
+					n=n;
+				}
 		}
 		wait(SC_ZERO_TIME);
 	}while(n);
 
+	cout << "errores: " << errores << endl;
 	fclose( fichero );
 
-//	sc_stop();
+	//sc_stop();
 
-	// descomentar la línea anterior si se desea que la simulación se detenga
+	// borrar la línea anterior si se desea que la simulación continue
 	while(true)
 		wait(SC_ZERO_TIME); 
  }
@@ -115,5 +120,8 @@ private:
 	FILE *fichero;
 	int LEN; 
 };
+
+
+
 
 #endif
